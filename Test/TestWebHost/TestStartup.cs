@@ -13,17 +13,12 @@ namespace DotnetUnitTest
 {
     public class TestStartup
     {
-        public TestStartup(IHostingEnvironment env)
+        public TestStartup(IConfiguration config)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)   //注意在这里设置路径，现在是Test\bin\Debug\netcoreapp2.1
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = config;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)

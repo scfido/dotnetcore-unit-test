@@ -31,6 +31,7 @@ namespace Test
         {
 
             var builder = WebHost.CreateDefaultBuilder()
+                .UseContentRoot("../../../../Web")
                 .UseEnvironment("Testing")
                 .UseStartup<TestStartup>();
 
