@@ -14,24 +14,26 @@ using Xunit;
 
 namespace Test
 {
-    public class ValuesControllerWhitHostTest : IClassFixture<TestWebHost>
+    //public class ValuesControllerWhitHostTest : IClassFixture<TestWebHost>
+    public class ValuesControllerWhitHostTest : IClassFixture<TestWebApplicationFactory<Startup>>
     {
-        HttpClient client;
+        TestWebApplicationFactory<Startup> factory;
 
-        public ValuesControllerWhitHostTest(TestWebHost host)
+        public ValuesControllerWhitHostTest(TestWebApplicationFactory<Startup> factory)
         {
-            client = host.Create(mockHttp: mock =>
-            {
-                //拦截服务端请求baidu.com的请求
-                mock.When("https://baidu.com").Respond("text/html", "百度一下就知道了");
-            })
-            .CreateClient();
+            this.factory = factory;
         }
 
         [Fact]
         public async void BaiduTest()
         {
-            var ret = await client.GetStringAsync("/api/Values/baidu");
+            var client = factory.Create(mock =>
+            {
+                //拦截服务端请求baidu.com的请求
+                mock.When("https://baidu.com").Respond("text/html", "百度一下就知道了");
+            });
+
+            var ret = await client.GetStringAsync("api/values/baidu");
             Assert.Equal("百度一下就知道了", ret);
         }
 
@@ -41,6 +43,8 @@ namespace Test
         [InlineData(3)]
         public async void GetIdTest(int i)
         {
+            var client = factory.CreateClient();
+
             var ret = await client.GetStringAsync($"/api/Values/{i}");
             Assert.Equal(i.ToString(), ret);
         }
